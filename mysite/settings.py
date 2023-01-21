@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "blog.apps.BlogConfig",
+    "django_saml2_auth",
 ]
 
 MIDDLEWARE = [
@@ -131,3 +132,63 @@ STATIC_ROOT = os.path.join(BASE_DIR, "static")
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+SAML2_AUTH = {
+    # Metadata is required, choose either remote url or local file path
+    "METADATA_AUTO_CONF_URL": "[The auto(dynamic) metadata configuration URL of SAML2]",
+    "METADATA_LOCAL_FILE_PATH": "[The metadata configuration file path]",
+    # "DEBUG": False,  # Send debug information to a log file
+    # # Optional settings below
+    # "DEFAULT_NEXT_URL": "/admin",  # Custom target redirect URL after the user get logged in. Default to /admin if not set. This setting will be overwritten if you have parameter ?next= specificed in the login URL.
+    # "CREATE_USER": True,  # Create a new Django user when a new user logs in. Defaults to True.
+    # "NEW_USER_PROFILE": {
+    #     "USER_GROUPS": [],  # The default group name when a new user logs in
+    #     "ACTIVE_STATUS": True,  # The default active status for new users
+    #     "STAFF_STATUS": False,  # The staff status for new users
+    #     "SUPERUSER_STATUS": False,  # The superuser status for new users
+    # },
+    # "ATTRIBUTES_MAP": {  # Change Email/UserName/FirstName/LastName to corresponding SAML2 userprofile attributes.
+    #     "email": "user.email",
+    #     "username": "user.username",
+    #     "first_name": "user.first_name",
+    #     "last_name": "user.last_name",
+    #     "token": "Token",  # Mandatory, can be unrequired if TOKEN_REQUIRED is False
+    #     "groups": "Groups",  # Optional
+    # },
+    # "GROUPS_MAP": {  # Optionally allow mapping SAML2 Groups to Django Groups
+    #     "SAML Group Name": "Django Group Name",
+    # },
+    # "TRIGGER": {
+    #     # Optional: needs to return a User Model instance or None
+    #     "GET_USER": "path.to.your.get.user.hook.method",
+    #     "CREATE_USER": "path.to.your.new.user.hook.method",
+    #     "BEFORE_LOGIN": "path.to.your.login.hook.method",
+    #     "AFTER_LOGIN": "path.to.your.after.login.hook.method",
+    #     # Optional. This is executed right before METADATA_AUTO_CONF_URL.
+    #     # For systems with many metadata files registered allows to narrow the search scope.
+    #     "GET_USER_ID_FROM_SAML_RESPONSE": "path.to.your.get.user.from.saml.hook.method",
+    #     # This can override the METADATA_AUTO_CONF_URL to enumerate all existing metadata autoconf URLs
+    #     "GET_METADATA_AUTO_CONF_URLS": "path.to.your.get.metadata.conf.hook.method",
+    # },
+    # "ASSERTION_URL": "https://mysite.com",  # Custom URL to validate incoming SAML requests against
+    # "ENTITY_ID": "https://mysite.com/saml2_auth/acs/",  # Populates the Issuer element in authn request
+    # "NAME_ID_FORMAT": FormatString,  # Sets the Format property of authn NameIDPolicy element, e.g. 'user.email'
+    # "USE_JWT": True,  # Set this to True if you are running a Single Page Application (SPA) with Django Rest Framework (DRF), and are using JWT authentication to authorize client users
+    # "JWT_ALGORITHM": "HS256",  # JWT algorithm to sign the message with
+    # "JWT_SECRET": "your.jwt.secret",  # JWT secret to sign the message with
+    # "JWT_PRIVATE_KEY": "--- YOUR PRIVATE KEY ---",  # Private key to sign the message with. The algorithm should be set to RSA256 or a more secure alternative.
+    # "JWT_PRIVATE_KEY_PASSPHRASE": "your.passphrase",  # If your private key is encrypted, you might need to provide a passphrase for decryption
+    # "JWT_PUBLIC_KEY": "--- YOUR PUBLIC KEY ---",  # Public key to decode the signed JWT token
+    # "JWT_EXP": 60,  # JWT expiry time in seconds
+    # "FRONTEND_URL": "https://myfrontendclient.com",  # Redirect URL for the client if you are using JWT auth with DRF. See explanation below
+    # "LOGIN_CASE_SENSITIVE": True,  # whether of not to get the user in case_sentive mode
+    # "AUTHN_REQUESTS_SIGNED": True,  # Require each authentication request to be signed
+    # "LOGOUT_REQUESTS_SIGNED": True,  # Require each logout request to be signed
+    # "WANT_ASSERTIONS_SIGNED": True,  # Require each assertion to be signed
+    # "WANT_RESPONSE_SIGNED": True,  # Require response to be signed
+    # "ACCEPTED_TIME_DIFF": None,  # Accepted time difference between your server and the Identity Provider
+    # "ALLOWED_REDIRECT_HOSTS": [
+    #     "https://myfrontendclient.com"
+    # ],  # Allowed hosts to redirect to using the ?next parameter
+    # "TOKEN_REQUIRED": True,  # Whether or not to require the token parameter in the SAML assertion
+}

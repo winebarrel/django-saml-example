@@ -1,1 +1,2 @@
 Django~=3.2.10
+grafana-django-saml2-auth==3.9.0
