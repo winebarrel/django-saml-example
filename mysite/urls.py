@@ -19,9 +19,9 @@ from django.conf.urls import url
 import django_saml2_auth.views
 
 urlpatterns = [
-    path("admin/", admin.site.urls),
-    path("", include("blog.urls")),
     url(r"^sso/", include("django_saml2_auth.urls")),
     url(r"^accounts/login/$", django_saml2_auth.views.signin),
     url(r"^admin/login/$", django_saml2_auth.views.signin),
+    path("admin/", admin.site.urls),
+    path("", include("blog.urls")),
 ]
