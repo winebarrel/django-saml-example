@@ -34,6 +34,8 @@ ALLOWED_HOSTS = [
     "[::1]",
     ".pythonanywhere.com",
     ".compute.amazonaws.com",
+    ".winebarrel.work",
+    "10.0.3.45",
 ]
 
 
@@ -144,86 +146,89 @@ MEDIA_ROOT = Path(BASE_DIR / "media")
 
 AUTHENTICATION_BACKENDS = (
     "django.contrib.auth.backends.ModelBackend",
-    "djangosaml2.backends.Saml2Backend",
+    #"djangosaml2.backends.Saml2Backend",
+    "lib.saml2.ModifiedSaml2Backend",
 )
 
 LOGIN_URL = "/saml2/login/"
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
-# import saml2
-# SAML_DEFAULT_BINDING = saml2.BINDING_HTTP_POST
+import saml2
+SAML_DEFAULT_BINDING = saml2.BINDING_HTTP_POST
 
 SAML_IGNORE_LOGOUT_ERRORS = True
 # SAML2_DISCO_URL = "https://your.ds.example.net/"
 
-SAML_DJANGO_USER_MAIN_ATTRIBUTE = "email"
-# SAML_USE_NAME_ID_AS_USERNAME = True
+SAML_DJANGO_USER_MAIN_ATTRIBUTE = "username" #emailAddress" #email"
+#SAML_USE_NAME_ID_AS_USERNAME = True
 SAML_CREATE_UNKNOWN_USER = True
 
 # ACS_DEFAULT_REDIRECT_URL = reverse_lazy('some_url_name')
 
-# SAML_ATTRIBUTE_MAPPING = {
-#     "uid": ("username",),
-#     "mail": ("email",),
-#     "cn": ("first_name",),
-#     "sn": ("last_name",),
-# }
+SAML_ATTRIBUTE_MAPPING = {
+     "name": ("username",),
+     "emailAddress": ("email",),
+     "givenName": ("first_name",),
+     "surname": ("last_name",),
+}
+
+LOGIN_REDIRECT_URL = '/admin'
 
 SAML_CONFIG = {
     # full path to the xmlsec1 binary programm
     # "xmlsec_binary": "/usr/bin/xmlsec1",
     # your entity id, usually your subdomain plus the url to the metadata view
-    "entityid": "http://localhost:8000/saml2/metadata/",
+    "entityid": "https://django.winebarrel.work/saml2/acs/",
     # directory with attribute mapping
     # "attribute_map_dir": os.path.join(BASE_DIR, "attribute-maps"),
     # Permits to have attributes not configured in attribute-mappings
     # otherwise...without OID will be rejected
-    "allow_unknown_attributes": True,
+    #"allow_unknown_attributes": True,
     # this block states what services we provide
     "service": {
         # we are just a lonely SP
         "sp": {
-            "name": "Federated Django sample SP",
-            "name_id_format": saml2.saml.NAMEID_FORMAT_TRANSIENT,
+            #"name": "Federated Django sample SP",
+            #"name_id_format": saml2.saml.NAMEID_FORMAT_TRANSIENT,
             # For Okta add signed logout requests. Enable this:
             # "logout_requests_signed": True,
             "endpoints": {
                 # url and binding to the assetion consumer service view
                 # do not change the binding or service name
                 "assertion_consumer_service": [
-                    ("http://localhost:8000/saml2/acs/", saml2.BINDING_HTTP_POST),
+                    ("https://django.winebarrel.work/saml2/acs/", saml2.BINDING_HTTP_POST),
                 ],
                 # url and binding to the single logout service view
                 # do not change the binding or service name
                 "single_logout_service": [
                     # Disable next two lines for HTTP_REDIRECT for IDP's that only support HTTP_POST. Ex. Okta:
-                    ("http://localhost:8000/saml2/ls/", saml2.BINDING_HTTP_REDIRECT),
-                    ("http://localhost:8000/saml2/ls/post", saml2.BINDING_HTTP_POST),
+                    ("https://django.winebarrel.work/saml2/ls/", saml2.BINDING_HTTP_REDIRECT),
+                    ("https://django.winebarrel.work/saml2/ls/post", saml2.BINDING_HTTP_POST),
                 ],
             },
-            "signing_algorithm": saml2.xmldsig.SIG_RSA_SHA256,
-            "digest_algorithm": saml2.xmldsig.DIGEST_SHA256,
+            #"signing_algorithm": saml2.xmldsig.SIG_RSA_SHA256,
+            #"digest_algorithm": saml2.xmldsig.DIGEST_SHA256,
             # Mandates that the identity provider MUST authenticate the
             # presenter directly rather than rely on a previous security context.
-            "force_authn": False,
+            #"force_authn": False,
             # Enable AllowCreate in NameIDPolicy.
-            "name_id_format_allow_create": False,
+            #"name_id_format_allow_create": False,
             # attributes that this project need to identify a user
-            "required_attributes": ["givenName", "sn", "mail"],
+            #"required_attributes": ["givenName", "sn", "mail"],
             # attributes that may be useful to have but not required
-            "optional_attributes": ["eduPersonAffiliation"],
-            "want_response_signed": True,
-            "authn_requests_signed": True,
-            "logout_requests_signed": True,
+            #"optional_attributes": ["eduPersonAffiliation"],
+            "want_response_signed": False, #True,
+            #"authn_requests_signed": False, #True,
+            #"logout_requests_signed": False, #True,
             # Indicates that Authentication Responses to this SP must
             # be signed. If set to True, the SP will not consume
             # any SAML Responses that are not signed.
-            "want_assertions_signed": True,
-            "only_use_keys_in_metadata": True,
+            #"want_assertions_signed": False, #True,
+            #"only_use_keys_in_metadata": True,
             # When set to true, the SP will consume unsolicited SAML
             # Responses, i.e. SAML Responses for which it has not sent
             # a respective SAML Authentication Request.
-            "allow_unsolicited": False,
+            #"allow_unsolicited": True, #False,
             # in this section the list of IdPs we talk to are defined
             # This is not mandatory! All the IdP available in the metadata will be considered instead.
             # "idp": {
@@ -247,7 +252,7 @@ SAML_CONFIG = {
     "metadata": {
         # "local": [os.path.join(BASE_DIR, "remote_metadata.xml")],
         "remote": [
-            {"url": "https://idp.testunical.it/idp/shibboleth"},
+            {"url": "https://login.microsoftonline.com/xxx/federationmetadata/2007-06/federationmetadata.xml?appid=xxx"},
         ],
         # "mdq": [
         #     {
@@ -259,15 +264,15 @@ SAML_CONFIG = {
     # set to 1 to output debugging information
     "debug": 1,
     # Signing
-    # "key_file": path.join(BASEDIR, "private.key"),  # private part
-    # "cert_file": path.join(BASEDIR, "public.pem"),  # public part
+    #"key_file": os.path.join(BASE_DIR, "server.key"),  # private part
+    #"cert_file": os.path.join(BASE_DIR, "server.crt"),  # public part
     # Encryption
-    # "encryption_keypairs": [
-    #     {
-    #         "key_file": path.join(BASEDIR, "private.key"),  # private part
-    #         "cert_file": path.join(BASEDIR, "public.pem"),  # public part
-    #     }
-    # ],
+    #"encryption_keypairs": [
+    #    {
+    #        "key_file": os.path.join(BASE_DIR, "server.key"),  # private part
+    #        "cert_file": os.path.join(BASE_DIR, "server.crt"),  # public part
+    #    }
+    #],
     # own metadata settings
     # "contact_person": [
     #     {
