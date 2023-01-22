@@ -133,6 +133,9 @@ STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+MEDIA_URL = "/media/"
+MEDIA_ROOT = Path(BASE_DIR / "media")
+
 SAML2_AUTH = {
     # Metadata is required, choose either remote url or local file path
     "METADATA_AUTO_CONF_URL": "[The auto(dynamic) metadata configuration URL of SAML2]",
