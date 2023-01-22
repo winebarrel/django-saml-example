@@ -16,12 +16,9 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import include, path
 from django.conf.urls import url
-import django_saml2_auth.views
 
 urlpatterns = [
-    url(r"^saml2_auth/", include("django_saml2_auth.urls")),
-    url(r"^accounts/login/$", django_saml2_auth.views.signin),
-    url(r"^admin/login/$", django_saml2_auth.views.signin),
     path("admin/", admin.site.urls),
     path("", include("blog.urls")),
+    url(r"^saml2/", include("djangosaml2.urls")),
 ]
