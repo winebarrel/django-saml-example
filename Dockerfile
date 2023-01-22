@@ -1,6 +1,9 @@
 FROM python:3.10.8-slim AS base
 
 RUN apt-get update && apt-get install -y \
+  lcov \
+  libxmlsec1-dev \
+  pkg-config \
   xmlsec1
 
 COPY . /app/
